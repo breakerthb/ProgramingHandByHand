@@ -1,220 +1,60 @@
-#define _CRT_SECURE_NO_WARNINGS
-
-#include <stdio.h>  
-
-#define MAX_SIZE 6
-
-void Copy(int* pDest, int* pSrc, int cnt)
+int IsPrimeNum1(int num)
 {
-	while (cnt--)
-	{
-		*pDest++ = *pSrc++;
-	}
+    int i;
+
+    if (num == 1)
+    {
+        return 0;
+    }
+
+    for (i = 2; i < num; i++)
+    {
+        if (num % i == 0)
+        {
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
-int CountPath(int maze[][MAX_SIZE], int i, int j)
+int IsPrimeNum2(int num)
 {
-	int cnt = 0;
-	// Up Point
-	if (i > 0)
-	{
-		if (maze[i - 1][j] == 0 || maze[i - 1][j] == 2)
-		{
-			cnt++;
-		}
-	}
+    int i, k;
 
-	// Down Point
-	if (i < MAX_SIZE - 1)
-	{
-		if (maze[i + 1][j] == 0 || maze[i + 1][j] == 2)
-		{
-			cnt++;
-		}
-	}
+    if (num == 1)
+    {
+        return 0;
+    }
 
-	// Left Point
-	if (j > 0)
-	{
-		if (maze[i][j - 1] == 0 || maze[i][j - 1] == 2)
-		{
-			cnt++;
-		}
-	}
+    k = (int)sqrt((double)num);
 
-	// Right Point
-	if (j < MAX_SIZE - 1)
-	{
-		if (maze[i][j + 1] == 0 || maze[i][j + 1] == 2)
-		{
-			cnt++;
-		}
-	}
+    for (i = 2; i <= k; i++)
+    {
+        if (num % i == 0)
+        {
+            return 0;
+        }
+    }
 
-	return cnt;
+    return 1;
 }
 
-void FindNext(int maze[][MAX_SIZE], int i, int j)
+int main()
 {
-	int cnt;
-	int line, colum;
-	// Up Point
-	if (i > 0)
-	{
-		line = i - 1;
-		colum = j;
-
-		if (maze[line][colum] == 0)
-		{
-			if (CountPath(maze, line, colum) == 1)
-			{
-				maze[line][colum] = 1;
-				FindNext(maze, line, colum);
-			}
-		}
-	}
-
-	// Down Point
-	if (i < MAX_SIZE - 1)
-	{
-		line = i + 1;
-		colum = j;
-
-		if (maze[line][colum] == 0)
-		{
-			if (CountPath(maze, line, colum) == 1)
-			{
-				maze[line][colum] = 1;
-				FindNext(maze, line, colum);
-			}
-		}
-	}
-
-	// Left Point
-	if (j > 0)
-	{
-		line = i;
-		colum = j - 1;
-
-		if (maze[line][colum] == 0)
-		{
-			if (CountPath(maze, line, colum) == 1)
-			{
-				maze[line][colum] = 1;
-				FindNext(maze, line, colum);
-			}
-		}
-	}
-
-	// Right Point
-	if (j < MAX_SIZE - 1)
-	{
-		line = i;
-		colum = j + 1;
-
-		if (maze[line][colum] == 0)
-		{
-			if (CountPath(maze, line, colum) == 1)
-			{
-				maze[line][colum] = 1;
-				FindNext(maze, line, colum);
-			}
-		}
-	}
-}
-
-void CutBranch(int arrMaze[][MAX_SIZE])
-{
-	int i, j;
-
-	arrMaze[0][0] = 2; // entry
-	arrMaze[MAX_SIZE - 1][MAX_SIZE - 1] = 2; // exit
-	for (i = 0; i < MAX_SIZE; i++)
-	{
-		for (j = 0; j < MAX_SIZE; j++)
-		{
-			if (arrMaze[i][j] != 0)
-			{
-				continue;
-			}
-			
-			if (CountPath(arrMaze, i, j) <= 1)
-			{
-				arrMaze[i][j] = 1;
-				FindNext(arrMaze, i, j);
-			}
-		}
-	}
-}
-
-void PrintMaze(int arrMaze[][MAX_SIZE])
-{
-	int i, j;
-	for (i = 0; i < MAX_SIZE; i++)
-	{
-		for (j = 0; j < MAX_SIZE; j++)
-		{
-			printf("%3d", arrMaze[i][j]);
-		}
-		
-		printf("\n");
-	}
-}
-
-void MarkMaze(int srcMaze[][MAX_SIZE], int MarkMaze[][MAX_SIZE])
-{
-	int i, j;
-	for (i = 0; i < MAX_SIZE; i++)
-	{
-		for (j = 0; j < MAX_SIZE; j++)
-		{
-			if (MarkMaze[i][j] == 0)
-			{
-				srcMaze[i][j] = 9;
-			}
-		}
-	}
-}
-
-void main()
-{
-	int i, j, k;
-	int maze[MAX_SIZE][MAX_SIZE] =
-	{
-		{ 0, 1, 0, 1, 1, 1 },
-		{ 0, 0, 0, 1, 0, 1 },
-		{ 0, 1, 1, 0, 0, 0 },
-		{ 0, 1, 1, 0, 1, 0 },
-		{ 0, 0, 0, 0, 1, 0 },
-		{ 0, 1, 1, 1, 1, 0 }
-	};
-	/*int maze[MAX_SIZE][MAX_SIZE] =
-	{
-		{ 0, 1, 0, 1, 1, 1 },
-		{ 0, 1, 1, 1, 0, 1 },
-		{ 0, 0, 0, 0, 0, 0 },
-		{ 0, 1, 0, 0, 1, 0 },
-		{ 0, 1, 0, 0, 1, 0 },
-		{ 0, 1, 1, 1, 1, 0 }
-	};*/
-	int mazeCpy[MAX_SIZE][MAX_SIZE];
-
-	// 打印原始迷宫
-	printf("原始迷宫：\n");
-	PrintMaze(maze);
-
-	// 迷宫剪支
-	Copy((int*)mazeCpy, (int*)maze, MAX_SIZE * MAX_SIZE);
-
-	CutBranch(mazeCpy);
-
-	// 打印剪支后的迷宫
-	printf("\n剪支后的迷宫：\n");
-	PrintMaze(mazeCpy);
-	
-	// 打印带正确路线的迷宫
-	MarkMaze(maze, mazeCpy);
-
-	printf("\n标记迷宫路线：\n");
-	PrintMaze(maze);
+    int num, i;
+    int isPrimeNum;
+    for (num = 1; num <= 100; num++)
+    {
+        if (IsPrimeNum1(num) == 1)
+        //if (IsPrimeNum2(num) == 1)
+        {
+            printf("%d\n", num);
+        }
+        else
+        {
+            printf("%d ", num);
+        }
+    }
+    printf("\n");
 }
