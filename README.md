@@ -1,15 +1,19 @@
 # ProgramingHandByHand
 C/C++ programing practice
 
-![](http://upload-images.jianshu.io/upload_images/145902-dcc5d9bf49798dde.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](http://upload-images.jianshu.io/upload_images/145902-8eb2a909aefac2e9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240/format/jpg)
 
-[天花板编程手把手计划-第1期-第3天](http://www.jianshu.com/p/e6d4733daca8)
+[天花板编程手把手计划-第1期-第4天](http://www.jianshu.com/p/cc312e23ed69)
 
-- 优化前
+- 斐波那契数列简单解法
 
-source.cpp
+Fib1.cpp
 
-- 优化后
+- 斐波那契数列递归解法
 
-source1.cpp
+Fib2.cpp
+
+- 丢硬币的递归算法
+
+ThrowCoins.cpp
 
