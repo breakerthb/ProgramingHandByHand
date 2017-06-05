@@ -1,126 +1,118 @@
-﻿#pragma warning(disable:4996)
+#pragma warning(disable:4996)
+
+#include <time.h>
 #include <stdio.h>
 
-#define MAX 15
+#include <windows.h>
 
-char g_arr[MAX];
-
-// 判断闰年，是闰年返回1，是平年返回0
-int IsLeapYear(int year)
+void Timer(int nSec)
 {
-	if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))
-		return 1;
-	else
-		return 0;
-}
-
-// 返回输入年份的1月1日是周几
-int GetFirstWeek(int year)
-{
-	return (35 + year + year / 4 - year / 100 + year / 400) % 7;
-}
-
-int g_days[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
-// 返回输入的年份中输入的月份天数
-int GetDays(int year, int month)
-{
-	if (month == 2 && IsLeapYear(year))
+	printf("Start Timer:\n");
+	while (nSec > 0)
 	{
-		return g_days[month - 1] + 1;
-	}
-	else
-	{
-		return g_days[month - 1];
-	}
-}
-
-// 得到字符串中的第一组数字
-int GetNextNum(char** ppStr)
-{
-	int ret = 0;
-	int num;
-	char* pStr = *ppStr;
-	while (1)
-	{
-		if (*pStr < '0' || *pStr > '9')
-		{
-			break;
-		}
-
-		num = *pStr - '0';
-		ret = ret * 10 + num;
-
-		pStr++;
-	}
-	pStr++;
-	*ppStr = pStr;
-
-	return ret;
-}
-
-int GetWeek(int year, int month, int day)
-{
-	int i;
-	int week = GetFirstWeek(year);
-	for (i = 1; i < month; i++)
-	{
-		week += GetDays(year, i);
+		Sleep(1000);
+		nSec--;
+		printf("%3d s\r", nSec);
 	}
 
-	week--;
-
-	week += day;
-	week = week % 7;
-
-	return week;
+	printf("\nTime is Up!\n");
 }
 
-int Process()
+void PrintTime(int nSec)
 {
-	int ret, answer;
-	int year, month, day;
-	int week;
-	char* pStr = g_arr;
+	int min, sec;
+	min = nSec / 60;
+	sec = nSec % 60;
 
-	scanf("%s", pStr);
-	scanf("%d", &answer);
-
-	year = GetNextNum(&pStr);
-	month = GetNextNum(&pStr);
-	day = GetNextNum(&pStr);
-
-	week = GetWeek(year, month, day);
-
-	if (week == answer)
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
+	printf("%02d:%02d\r", min, sec);
 }
 
+void MinuteTimer(int nMin)
+{
+	int nSec = nMin;// *60;
+	printf("Start Timer:\n");
+	while (nSec > 0)
+	{
+		Sleep(1000);
+		nSec--;
+		PrintTime(nSec);
+	}
+
+	printf("\nTime is Up!\n");
+}
+
+void Alarm(int tag)
+{
+	switch (tag)
+	{
+	case 0:
+		printf("----- ----- ----- ----- ----- ----- ----- ----- ----- -----");
+		break;
+	case 1:
+		printf("///// ///// ///// ///// ///// ///// ///// ///// ///// /////");
+		break;
+	case 2:
+		printf("||||| ||||| ||||| ||||| ||||| ||||| ||||| ||||| ||||| |||||");
+		break;
+	case 3:
+		printf("\\\\\\\\\\ \\\\\\\\\\ \\\\\\\\\\ \\\\\\\\\\ \\\\\\\\\\ \\\\\\\\\\ \\\\\\\\\\ \\\\\\\\\\ \\\\\\\\\\ \\\\\\\\\\");
+		break;
+	default:
+		break;
+	}
+
+	printf("\r");
+}
+
+#define LOG_FILE "alarm.log"
 int main()
 {
-	int i, cnt;
+	int min;
+	char cmd[100];
 
-	freopen("input.txt", "r", stdin);
-	scanf("%d", &cnt);
-
-	for (i = 0; i < cnt; i++)
+	while (1)
 	{
-		printf("#%d : ", i + 1);
-		if (Process() == 1)
-		{
-			printf("Right\n");
-		}
-		else
-		{
-			printf("Wrong\n");
-		}
-	}
+		printf("Please input minutes : ");
+		scanf("%d", &min);
 
-	return 1;
+		sprintf(cmd, "echo %%date%% %%time%% >> %s", LOG_FILE);
+		system(cmd);
+
+		MinuteTimer(min);
+
+		printf("Press Esc to stop \n");
+		int cnt = 1;
+		while (cnt++)
+		{
+			Alarm(cnt % 4);
+
+			if (kbhit())
+			{
+				int key = getch();
+				switch (key)
+				{
+					// Esc
+				case 27:
+					cnt = 0;
+					break;
+				default:
+					break;
+				}
+			}
+
+			Sleep(500);
+		}
+		
+		sprintf(cmd, "echo You have worked %d minutes >> %s", min, LOG_FILE);
+		system(cmd);
+		sprintf(cmd, "echo ----- ----- ----- ----- >> %s", LOG_FILE);
+		system(cmd);
+		
+		printf("\n ***** ***** ***** ***** ***** \n");
+
+	}
+	
+	return 0;
 }
+
+
